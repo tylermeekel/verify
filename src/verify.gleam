@@ -314,3 +314,114 @@ pub fn string_not_equal_to(compare_to: String, next: fn() -> Verifier(String)) {
     }
   })
 }
+
+// --------------- INTEGERS ---------------
+
+/// Verifies that an integer is at least a given value.
+pub fn int_min_value(value: Int, next: fn() -> Verifier(Int)) {
+  Verifier(fn(data) {
+    let is_int_min_value = data >= value
+    case is_int_min_value {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let min_value_string = int.to_string(value)
+        ["must be at least " <> min_value_string, ..errors]
+      }
+    }
+  })
+}
+
+/// Verifies that an integer is at most a given value.
+pub fn int_max_value(value: Int, next: fn() -> Verifier(Int)) {
+  Verifier(fn(data) {
+    let is_int_max_value = data <= value
+    case is_int_max_value {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let max_value_string = int.to_string(value)
+        ["must be less than " <> max_value_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn int_value_range(
+  min_value: Int,
+  max_value: Int,
+  next: fn() -> Verifier(Int),
+) {
+  Verifier(fn(data) {
+    let is_int_within_range = data >= min_value && data <= max_value
+    case is_int_within_range {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let min_value_string = int.to_string(min_value)
+        let max_value_string = int.to_string(max_value)
+        [
+          "must be at least "
+            <> min_value_string
+            <> " and at most "
+            <> max_value_string,
+          ..errors
+        ]
+      }
+    }
+  })
+}
+
+pub fn int_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
+  Verifier(fn(data) {
+    let is_int_equal_to = data == compare_to
+    case is_int_equal_to {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let compare_to_string = int.to_string(compare_to)
+        ["must be equal to: " <> compare_to_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn int_not_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
+  Verifier(fn(data) {
+    let is_int_not_equal_to = data != compare_to
+    case is_int_not_equal_to {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let compare_to_string = int.to_string(compare_to)
+        ["must not be equal to: " <> compare_to_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn int_divisible_by(divisor: Int, next: fn() -> Verifier(Int)) {
+  Verifier(fn(data) {
+    let is_int_divisible_by = data % divisor == 0
+    case is_int_divisible_by {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let divisor_string = int.to_string(divisor)
+        ["must be divisible by: " <> divisor_string, ..errors]
+      }
+    }
+  })
+}

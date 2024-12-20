@@ -323,3 +323,147 @@ pub fn string_not_equals_error_test() {
   |> should.be_error
   |> should.equal(["must not be equal to: \"hello, world\""])
 }
+
+pub fn int_min_value_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_min_value(5)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(42)
+}
+
+pub fn int_min_value_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_min_value(50)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must be at least 50"])
+}
+
+pub fn int_max_value_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_max_value(50)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(num)
+}
+
+pub fn int_max_value_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_max_value(5)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must be less than 5"])
+}
+
+pub fn int_value_range_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_value_range(5, 50)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(num)
+}
+
+pub fn int_value_range_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_value_range(0, 40)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must be at least 0 and at most 40"])
+}
+
+pub fn int_equal_to_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_equal_to(42)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(num)
+}
+
+pub fn int_equal_to_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_equal_to(24)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must be equal to: 24"])
+}
+
+pub fn int_not_equal_to_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_not_equal_to(24)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(num)
+}
+
+pub fn int_not_equal_to_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_not_equal_to(42)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must not be equal to: 42"])
+}
+
+pub fn int_divisible_by_ok_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_divisible_by(2)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_ok
+  |> should.equal(num)
+}
+
+pub fn int_divisible_by_error_test() {
+  let num = 42
+  let verifier = {
+    use <- verify.int_divisible_by(50)
+    verify.finalize()
+  }
+
+  verify.run(num, verifier)
+  |> should.be_error
+  |> should.equal(["must be divisible by: 50"])
+}
