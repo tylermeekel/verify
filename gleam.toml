@@ -1,0 +1,11 @@
+name = "verify"
+version = "0.1.0"
+description = "Ergonomic data validation library inspired by decode!"
+licences = ["MIT"]
+repository = { type = "github", user = "tylermeekel", repo = "verify" }
+
+[dependencies]
+gleam_stdlib = ">= 0.34.0 and < 2.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
