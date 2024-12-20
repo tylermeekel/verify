@@ -14,8 +14,10 @@
 //// assert result == Ok(str)
 //// ```
 
+import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
 
 /// A verifier is a value that can be used to test a set of rules
@@ -420,6 +422,115 @@ pub fn int_divisible_by(divisor: Int, next: fn() -> Verifier(Int)) {
       False -> {
         let errors = next().function(data)
         let divisor_string = int.to_string(divisor)
+        ["must be divisible by: " <> divisor_string, ..errors]
+      }
+    }
+  })
+}
+
+// --------------- FLOATS ---------------
+pub fn float_min_value(value: Float, next: fn() -> Verifier(Float)) {
+  Verifier(fn(data) {
+    let is_float_min_value = data >=. value
+    case is_float_min_value {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let min_value_string = float.to_string(value)
+        ["must be at least " <> min_value_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn float_max_value(value: Float, next: fn() -> Verifier(Float)) {
+  Verifier(fn(data) {
+    let is_float_max_value = data <=. value
+    case is_float_max_value {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let max_value_string = float.to_string(value)
+        ["must be at most " <> max_value_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn float_value_range(
+  min_value: Float,
+  max_value: Float,
+  next: fn() -> Verifier(Float),
+) {
+  Verifier(fn(data) {
+    let is_data_within_range = data >=. min_value && data <=. max_value
+    case is_data_within_range {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let min_value_string = float.to_string(min_value)
+        let max_value_string = float.to_string(max_value)
+        [
+          "must be at least "
+            <> min_value_string
+            <> " and at most "
+            <> max_value_string,
+          ..errors
+        ]
+      }
+    }
+  })
+}
+
+pub fn float_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
+  Verifier(fn(data) {
+    let is_float_equal_to = data == compare_to
+    case is_float_equal_to {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let compare_to_string = float.to_string(compare_to)
+        ["must be equal to: " <> compare_to_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn float_not_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
+  Verifier(fn(data) {
+    let is_float_not_equal_to = data != compare_to
+    case is_float_not_equal_to {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let compare_to_string = float.to_string(compare_to)
+        ["must not be equal to: " <> compare_to_string, ..errors]
+      }
+    }
+  })
+}
+
+pub fn float_divisible_by(divisor: Float, next: fn() -> Verifier(Float)) {
+  Verifier(fn(data) {
+    let remainder = result.unwrap(float.modulo(data, divisor), -1.0)
+    let is_float_divisible_by = remainder == 0.0
+    case is_float_divisible_by {
+      True -> {
+        next().function(data)
+      }
+      False -> {
+        let errors = next().function(data)
+        let divisor_string = float.to_string(divisor)
         ["must be divisible by: " <> divisor_string, ..errors]
       }
     }
