@@ -45,16 +45,20 @@ pub fn finalize() {
   Verifier(fn(_) { [] })
 }
 
-/// Creates a custom verifier.
-pub fn custom(function: fn(t) -> Result(t, String), next: fn() -> Verifier(t)) {
+/// Creates a custom verifier. Pass in a function that returns the initial value on success,
+/// or a list of error messages on failure.
+pub fn custom(
+  function: fn(t) -> Result(t, List(String)),
+  next: fn() -> Verifier(t),
+) {
   Verifier(fn(data) {
     case function(data) {
       Ok(_) -> {
         next().function(data)
       }
-      Error(error_message) -> {
+      Error(error_messages) -> {
         let errors = next().function(data)
-        [error_message, ..errors]
+        list.flatten([error_messages, errors])
       }
     }
   })
