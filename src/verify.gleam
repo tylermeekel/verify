@@ -357,6 +357,7 @@ pub fn int_max_value(value: Int, next: fn() -> Verifier(Int)) {
   })
 }
 
+/// Verifies that an integer has a value that falls within a given inclusive range of values.
 pub fn int_value_range(
   min_value: Int,
   max_value: Int,
@@ -384,6 +385,7 @@ pub fn int_value_range(
   })
 }
 
+/// Verifies that an int is equal to a given value.
 pub fn int_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
   Verifier(fn(data) {
     let is_int_equal_to = data == compare_to
@@ -400,6 +402,7 @@ pub fn int_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
   })
 }
 
+/// Verifies that an int is not equal to a given range of values.
 pub fn int_not_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
   Verifier(fn(data) {
     let is_int_not_equal_to = data != compare_to
@@ -416,6 +419,7 @@ pub fn int_not_equal_to(compare_to: Int, next: fn() -> Verifier(Int)) {
   })
 }
 
+/// Verifies that an int is divisible by a given divisor.
 pub fn int_divisible_by(divisor: Int, next: fn() -> Verifier(Int)) {
   Verifier(fn(data) {
     let is_int_divisible_by = data % divisor == 0
@@ -433,6 +437,7 @@ pub fn int_divisible_by(divisor: Int, next: fn() -> Verifier(Int)) {
 }
 
 // --------------- FLOATS ---------------
+/// Verifies that a float is at least a given value.
 pub fn float_min_value(value: Float, next: fn() -> Verifier(Float)) {
   Verifier(fn(data) {
     let is_float_min_value = data >=. value
@@ -449,6 +454,7 @@ pub fn float_min_value(value: Float, next: fn() -> Verifier(Float)) {
   })
 }
 
+/// Verifies that a float is at most a given value.
 pub fn float_max_value(value: Float, next: fn() -> Verifier(Float)) {
   Verifier(fn(data) {
     let is_float_max_value = data <=. value
@@ -465,6 +471,7 @@ pub fn float_max_value(value: Float, next: fn() -> Verifier(Float)) {
   })
 }
 
+/// Verifies that a float has a value that falls within a given inclusive range of values.
 pub fn float_value_range(
   min_value: Float,
   max_value: Float,
@@ -492,6 +499,7 @@ pub fn float_value_range(
   })
 }
 
+/// Verifies that a float is equal to a given value.
 pub fn float_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
   Verifier(fn(data) {
     let is_float_equal_to = data == compare_to
@@ -508,6 +516,7 @@ pub fn float_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
   })
 }
 
+/// Verifies that a float is not equal to a given value.
 pub fn float_not_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
   Verifier(fn(data) {
     let is_float_not_equal_to = data != compare_to
@@ -524,6 +533,8 @@ pub fn float_not_equal_to(compare_to: Float, next: fn() -> Verifier(Float)) {
   })
 }
 
+/// Verifies that a float is divisible by a given divisor. May not always work
+/// as expected, due to floating point inaccuracies, use at your own discretion.
 pub fn float_divisible_by(divisor: Float, next: fn() -> Verifier(Float)) {
   Verifier(fn(data) {
     let remainder = result.unwrap(float.modulo(data, divisor), -1.0)
