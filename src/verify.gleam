@@ -32,10 +32,10 @@ pub opaque type Verifier(t) {
 /// Run a verifier against a piece of data, returning a result containing
 /// either the data that was passed in, or a list of error messages from
 /// failed validations.
-pub fn run(data: t, verifier: Verifier(t)) -> Result(t, List(String)) {
+pub fn run(data: t, verifier: Verifier(t)) -> Result(Nil, List(String)) {
   let errors = verifier.function(data)
   case errors {
-    [] -> Ok(data)
+    [] -> Ok(Nil)
     _ -> Error(errors)
   }
 }
@@ -45,10 +45,10 @@ pub fn finalize() {
   Verifier(fn(_) { [] })
 }
 
-/// Creates a custom verifier. Pass in a function that returns the initial value on success,
+/// Creates a custom verifier. Pass in a function that returns Ok(Nil) on success,
 /// or a list of error messages on failure.
 pub fn custom(
-  function: fn(t) -> Result(t, List(String)),
+  function: fn(t) -> Result(Nil, List(String)),
   next: fn() -> Verifier(t),
 ) {
   Verifier(fn(data) {

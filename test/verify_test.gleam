@@ -1,9 +1,60 @@
+import gleam/list
+import gleam/result
 import gleeunit
 import gleeunit/should
 import verify
 
 pub fn main() {
   gleeunit.main()
+}
+
+pub type Item {
+  Item(name: String, count: Int)
+}
+
+pub fn custom_item_verify_ok_test() {
+  let item = Item("bread", 20)
+  let verifier = {
+    use <- verify.custom(verify_item)
+    verify.finalize()
+  }
+
+  verify.run(item, verifier)
+  |> should.be_ok
+  |> should.equal(Nil)
+}
+
+pub fn custom_item_verify_error_test() {
+  let item = Item("", -1)
+  let verifier = {
+    use <- verify.custom(verify_item)
+    verify.finalize()
+  }
+
+  verify.run(item, verifier)
+  |> should.be_error
+  |> should.equal(["must be at least 0", "must not be empty"])
+}
+
+fn verify_item(item: Item) -> Result(Nil, List(String)) {
+  let name_verifier = {
+    use <- verify.string_not_empty
+    verify.finalize()
+  }
+
+  let count_verifier = {
+    use <- verify.int_min_value(0)
+    verify.finalize()
+  }
+
+  let name_result = verify.run(item.name, name_verifier)
+  let count_result = verify.run(item.count, count_verifier)
+
+  let errors = result.partition([name_result, count_result]).1
+  case errors {
+    [] -> Ok(Nil)
+    _ -> Error(list.flatten(errors))
+  }
 }
 
 pub fn string_min_length_ok_test() {
@@ -15,7 +66,7 @@ pub fn string_min_length_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_min_length_error_test() {
@@ -39,7 +90,7 @@ pub fn string_max_length_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_max_length_error_test() {
@@ -63,7 +114,7 @@ pub fn string_exact_length_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_exact_length_error_test() {
@@ -87,7 +138,7 @@ pub fn string_length_range_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_length_range_error_test() {
@@ -113,7 +164,7 @@ pub fn string_not_empty_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_not_empty_error_test() {
@@ -137,7 +188,7 @@ pub fn string_allowed_characters_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_allowed_characters_error_test() {
@@ -163,7 +214,7 @@ pub fn string_disallowed_characters_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_disallowed_characters_error_test() {
@@ -189,7 +240,7 @@ pub fn string_starts_with_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_starts_with_error_test() {
@@ -213,7 +264,7 @@ pub fn string_ends_with_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_ends_with_error_test() {
@@ -237,7 +288,7 @@ pub fn string_contains_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_contains_error_test() {
@@ -261,7 +312,7 @@ pub fn string_does_not_contain_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_does_not_contain_error_test() {
@@ -285,7 +336,7 @@ pub fn string_equals_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_equals_error_test() {
@@ -309,7 +360,7 @@ pub fn string_not_equals_ok_test() {
 
   verify.run(str, verifier)
   |> should.be_ok
-  |> should.equal(str)
+  |> should.equal(Nil)
 }
 
 pub fn string_not_equals_error_test() {
@@ -333,7 +384,7 @@ pub fn int_min_value_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(42)
+  |> should.equal(Nil)
 }
 
 pub fn int_min_value_error_test() {
@@ -357,7 +408,7 @@ pub fn int_max_value_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn int_max_value_error_test() {
@@ -381,7 +432,7 @@ pub fn int_value_range_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn int_value_range_error_test() {
@@ -405,7 +456,7 @@ pub fn int_equal_to_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn int_equal_to_error_test() {
@@ -429,7 +480,7 @@ pub fn int_not_equal_to_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn int_not_equal_to_error_test() {
@@ -453,7 +504,7 @@ pub fn int_divisible_by_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn int_divisible_by_error_test() {
@@ -477,7 +528,7 @@ pub fn float_min_value_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_min_value_error_test() {
@@ -501,7 +552,7 @@ pub fn float_max_value_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_max_value_error_test() {
@@ -525,7 +576,7 @@ pub fn float_value_range_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_value_range_error_test() {
@@ -549,7 +600,7 @@ pub fn float_equal_to_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_equal_to_error_test() {
@@ -573,7 +624,7 @@ pub fn float_not_equal_to_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_not_equal_to_error_test() {
@@ -597,7 +648,7 @@ pub fn float_divisible_by_ok_test() {
 
   verify.run(num, verifier)
   |> should.be_ok
-  |> should.equal(num)
+  |> should.equal(Nil)
 }
 
 pub fn float_divisible_by_error_test() {

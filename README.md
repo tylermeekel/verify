@@ -7,6 +7,8 @@ Ergonomic data validation library inspired by decode!
 ```sh
 gleam add verify
 ```
+## Examples
+### Simple Usage
 ```gleam
 import verify
 
@@ -19,6 +21,48 @@ pub fn main() {
   }
 
   verify.run(data, verifier)
+}
+```
+### Writing Your Own Custom Verifier
+```gleam
+import verify
+import gleam/result
+import gleam/list
+
+pub type Item {
+  Item(name: String, count: Int)
+}
+
+pub fn main() {
+  let item = Item("bread", 20)
+  let verifier = {
+    use <- verify.custom(verify_item)
+    verify.finalize()
+  }
+
+  verify.run(item, verifier)
+}
+
+
+fn verify_item(item: Item) -> Result(Nil, List(String)) {
+  let name_verifier = {
+    use <- verify.string_not_empty
+    verify.finalize()
+  }
+
+  let count_verifier = {
+    use <- verify.int_min_value(0)
+    verify.finalize()
+  }
+
+  let name_result = verify.run(item.name, name_verifier)
+  let count_result = verify.run(item.count, count_verifier)
+
+  let errors = result.partition([name_result, count_result]).1
+  case errors {
+    [] -> Ok(Nil)
+    _ -> Error(list.flatten(errors))
+  }
 }
 ```
 
