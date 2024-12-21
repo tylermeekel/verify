@@ -1,5 +1,5 @@
 name = "verify"
-version = "0.3.0"
+version = "0.4.0"
 description = "Ergonomic data validation library inspired by decode!"
 licences = ["MIT"]
 repository = { type = "github", user = "tylermeekel", repo = "verify" }
